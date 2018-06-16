@@ -1,0 +1,53 @@
+<!-- Build a table  -->
+<h1>Mountains</h1>
+
+<div id="mountains"></div>
+
+<script>
+  const MOUNTAINS = [
+    {name: "Kilimanjaro", height: 5895, place: "Tanzania"},
+    {name: "Everest", height: 8848, place: "Nepal"},
+    {name: "Mount Fuji", height: 3776, place: "Japan"},
+    {name: "Vaalserberg", height: 323, place: "Netherlands"},
+    {name: "Denali", height: 6168, place: "United States"},
+    {name: "Popocatepetl", height: 5465, place: "Mexico"},
+    {name: "Mont Blanc", height: 4808, place: "Italy/France"}
+  ];
+
+  // Your code here
+  // 1. Add <table> element
+  const mountains = document.getElementById('mountains');
+  const table = document.createElement('table');
+  mountains.appendChild(table);
+
+  // 2. Add table headers
+  const propertyNames = Object.keys(MOUNTAINS[0]);
+  const trHead = document.createElement('tr');
+  table.appendChild(trHead);
+
+  for (let prop of propertyNames) {
+    const text = document.createTextNode(prop);
+    const th = document.createElement('th');
+
+    th.appendChild(text);
+    trHead.appendChild(th);
+  }
+
+  // 3. Add table body
+  for (let mountain of MOUNTAINS) {
+    const tr = document.createElement('tr');
+    table.appendChild(tr);
+    for (let prop of propertyNames) {
+      const value = mountain[prop];
+      const text = document.createTextNode(value);
+      const td = document.createElement('td');
+
+      if (!isNaN(value)) {
+        td.style.textAlign = 'right';
+      }
+
+      td.appendChild(text);
+      tr.appendChild(td);
+    }
+  }
+</script>
