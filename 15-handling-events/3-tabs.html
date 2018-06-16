@@ -1,0 +1,66 @@
+<style>
+  .btn {
+    margin: 3px;
+    background-color: lightblue;
+    border: none;
+    font-size: 14px;
+    padding: 16px 32px;
+  }
+  .active {
+    background-color: lightgreen;
+  }
+</style>
+
+<tab-panel>
+  <div data-tabname="one">Tab one</div>
+  <div data-tabname="two">Tab two</div>
+  <div data-tabname="three">Tab three</div>
+</tab-panel>
+
+<script>
+  function asTabs(node) {
+    if (node.children.length == 0) {
+      return;
+    }
+    // Your code here.
+    const tabs = Array.from(node.children);
+
+    //1 take child & save as array & hide all except 1st
+    const buttons = tabs.map((tab, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = tab.textContent;
+        btn.onclick = getButtonClickHandler(i);
+
+        if (i == 0) {
+          btn.className = 'btn active';
+        } else {
+          tab.style.display = 'none';
+          btn.className = 'btn';
+        }
+
+        return btn;
+    });
+
+    //2 draw buttons
+    const btnContainer = document.createElement('div');
+    buttons.forEach(b => btnContainer.appendChild(b));
+    node.insertBefore(btnContainer, node.children[0]);
+
+    //3 handle btn clicks
+    function getButtonClickHandler(index) {
+      return function() {
+        tabs.forEach((tab, i) => {
+          if (i === index) {
+            tab.style.display = 'block';
+            buttons[i].className = 'btn active';
+          } else {
+            tab.style.display = 'none';
+            buttons[i].className = 'btn';
+          }
+        });
+      }
+    }
+  }
+
+  asTabs(document.querySelector("tab-panel"));
+</script>

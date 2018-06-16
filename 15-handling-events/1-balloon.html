@@ -1,0 +1,39 @@
+<p>🎈</p>
+
+<script>
+  // Your code here
+  const balloon = document.querySelector('p');
+  let balloonSize = 10;
+  balloon.style.fontSize = balloonSize + 'px';
+  console.log('fontsize', balloon.style.fontSize);
+
+  function changeBalloonSize(amount) {
+  balloonSize *= amount;
+  if (balloonSize < 1) {
+    balloonSize = 1;
+  }
+  balloon.style.fontSize = balloonSize + 'px';
+  }
+
+  function checkExplosion(balloon) {
+    if (balloonSize > 50) {
+      balloon.textContent = '💥';
+      window.removeEventListener('keydown', keypressHandler);
+    }
+  }
+
+  function keypressHandler(event) {
+    checkExplosion(balloon);
+
+    if (event.key == 'ArrowUp') {
+      changeBalloonSize(1.1);
+      event.preventDefault();
+    }
+    if (event.key == 'ArrowDown') {
+      changeBalloonSize(0.9);
+      event.preventDefault();
+    }
+  }
+
+  window.addEventListener('keydown', keypressHandler);
+</script>
