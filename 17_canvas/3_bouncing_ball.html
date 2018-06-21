@@ -1,0 +1,62 @@
+<canvas width="400" height="400"></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+
+    let lastTime = null;
+    function frame(time) {
+        if (lastTime != null) {
+            updateAnimation(Math.min(100, time - lastTime) / 1000);
+        }
+        lastTime = time;
+        requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+
+    let speed = {
+        x: Math.random() * 100 + 100,
+        y: Math.random() * 100 + 100
+    };
+
+    const box = {
+        x: 1,
+        y: 1,
+        width: 398,
+        height: 398,
+    };
+
+    const ball = {
+        x: box.width / 2,
+        y: box.height / 2,
+        radius: 20
+    };
+
+
+    function updateAnimation(step) {
+        // Your code here.
+
+        // Check collisions
+        if (ball.x - ball.radius <= 0 || ball.x + ball.radius >= box.width) {
+            speed.x = -speed.x;
+        }
+
+        if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= box.height) {
+            speed.y = -speed.y;
+        }
+
+
+        // Calculate new position
+        ball.x += step * speed.x;
+        ball.y += step * speed.y;
+
+        // Clear
+        cx.clearRect(box.x, box.y, box.width, box.height);
+
+        // Draw
+        cx.beginPath();
+        cx.strokeRect(box.x, box.y, box.width, box.height);
+        cx.fillStyle = "red";
+        cx.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI);
+        cx.fill();
+    }
+</script>

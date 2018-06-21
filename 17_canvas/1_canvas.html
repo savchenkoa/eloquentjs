@@ -1,0 +1,135 @@
+<canvas width="600" height="200"></canvas>
+<script>
+    let cx = document.querySelector("canvas").getContext("2d");
+
+    // Your code here.
+    trapezoid(cx, {
+        p1: { x: 1, y: 100 },
+        p2: { x: 15, y: 50 },
+        w1: 100,
+        w2: 50
+    });
+
+    diamond(cx, {
+        x: 140,
+        y: 75,
+        size: 60,
+        color: 'red'
+    });
+
+    zigzag(cx, {
+        x: 190,
+        y: 25,
+        width: 100,
+        count: 10
+    });
+
+    spiral(cx, {
+        center: { x: 360, y: 70 },
+        radius: 5,
+        coilCount: 8
+    });
+
+    star(cx, {
+        center: { x: 520, y: 70 },
+        edgeCount: 10,
+        color: "lightgreen",
+        radius: 70
+    });
+
+
+
+
+    /* 
+    p2     ___     w2
+    p1    /___\    w1
+     */
+    function trapezoid(cx, params) {
+        let { p1, p2, w1, w2 } = params;
+        cx.beginPath();
+        cx.moveTo(p1.x, p1.y);
+        cx.lineTo(p2.x, p2.y);
+        cx.lineTo(p2.x + w2, p2.y);
+        cx.lineTo(p1.x + w1, p1.y);
+        cx.closePath();
+        cx.stroke();
+    }
+
+    function diamond(cx, params) {
+        let { x, y, size, color } = params;
+
+        cx.fillStyle = color;
+        cx.translate(x, y);
+        cx.rotate(Math.PI / 4);
+
+        cx.fillRect(- size / 2, - size / 2, size, size);
+
+        cx.rotate(-Math.PI / 4);
+        cx.translate(-x, -y);
+    }
+
+    function zigzag(cx, params) {
+        let { x, y, width, count } = params;
+        let yIncrement = width / count;
+        // cx.beginPath();
+
+        cx.moveTo(x, y);
+
+        let drawX = x;
+        let drawY = y;
+        for (let i = 0; i < count; i++) {
+            drawY += yIncrement;
+            if (i % 2 === 0) {
+                drawX += width;
+            } else {
+                drawX -= width;
+            }
+            cx.lineTo(drawX, drawY);
+        }
+
+        // cx.closePath();
+        cx.stroke();
+    }
+
+    function spiral(cx, params) {
+        let { center, radius, coilCount = 10 } = params;
+        cx.fillStyle = "black";
+
+        for (let angle = 0; angle < Math.PI * coilCount;) {
+            let x = Math.cos(angle) * radius + center.x;
+            let y = Math.sin(angle) * radius + center.y;
+
+            if (angle === 0) {
+                cx.moveTo(x, y);
+            }
+            cx.lineTo(x, y);
+            cx.moveTo(x, y);
+
+            angle += 0.02;
+            radius += 0.05;
+        }
+        cx.stroke();
+    }
+
+    function star(cx, params) {
+        let { center, edgeCount, radius, color } = params;
+        let step = 2 * Math.PI / edgeCount;
+
+        cx.beginPath();
+        let angle = 0;
+        for (let i = 0; i <= edgeCount; i++) {
+            let nextX = center.x + Math.cos(angle) * radius;
+            let nextY = center.y + Math.sin(angle) * radius;
+
+            if (i === 0) {
+                cx.moveTo(nextX, nextY);
+            } else {
+                cx.quadraticCurveTo(center.x, center.y, nextX, nextY);
+            }
+            angle += step;
+        }
+
+        cx.fillStyle = color;
+        cx.fill();
+    }
+</script>
