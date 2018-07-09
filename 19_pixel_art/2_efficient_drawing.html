@@ -1,0 +1,40 @@
+<meta charset="utf-8"> <!-- to support icons-->
+<!doctype html>
+<script src="19_paint.js"></script> <!-- book editor code -->
+
+<div></div>
+<script>
+    // Change this method
+    PictureCanvas.prototype.syncState = function(picture) {
+        if (this.picture == picture) return;
+        let oldPic = this.picture;
+        this.picture = picture;
+        efficiendDrawPicture(this.picture, oldPic, this.dom, scale);
+    };
+
+    // You may want to use or change this as well
+    function efficiendDrawPicture(picture, oldPicture, canvas, scale) {
+        if (!oldPicture) {
+            canvas.width = picture.width * scale;
+            canvas.height = picture.height * scale;
+        }
+        let cx = canvas.getContext("2d");
+
+        let drawCnt = 0;
+        for (let y = 0; y < picture.height; y++) {
+            for (let x = 0; x < picture.width; x++) {
+                let newPixel = picture.pixel(x, y);
+                let oldPixel = oldPicture ? oldPicture.pixel(x, y) : null;
+                if (newPixel !== oldPixel) {
+                    cx.fillStyle = newPixel;
+                    cx.fillRect(x * scale, y * scale, scale, scale);
+                    drawCnt++;
+                }
+            }
+        }
+        console.log({drawCnt});
+    }
+
+    document.querySelector("div")
+        .appendChild(startPixelEditor({}));
+</script>

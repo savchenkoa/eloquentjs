@@ -1,0 +1,68 @@
+<meta charset="utf-8"> <!-- to support icons-->
+<!doctype html>
+<script src="19_paint.js"></script> <!-- book editor code -->
+
+<div></div>
+<script>
+    // The old draw tool. Rewrite this.
+
+    function drawLine(start, end, state) {
+        console.log('line', start, end);
+        let drawn = [];
+
+        let xDiff = Math.abs(start.x - end.x);
+        let yDiff = Math.abs(start.y - end.y);
+
+        if (xDiff >= yDiff) {
+            if (start.x > end.x) {
+                [start, end] = [end, start];
+            }
+            let incr = (end.y - start.y) / (end.x - start.x);
+
+            for (let {x, y} = start; x <= end.x; x++) {
+                drawn.push({x, y: Math.round(y), color: state.color});
+                y += incr;
+            }
+
+        } else {
+            if (start.y > end.y) {
+                [start, end] = [end, start];
+            }
+            let incr = (end.x - start.x) / (end.y - start.y);
+            let x = start.x;
+
+            for (let {x, y} = start; y <= end.y; y++) {
+                drawn.push({x: Math.round(x), y, color: state.color});
+                x += incr;
+            }
+        }
+
+        return drawn;
+    }
+    function draw(start, state, dispatch) {
+        function drawPixel(pos, state) {
+            let drawn = drawLine(start, pos, state);
+            start = pos;
+            dispatch({picture: state.picture.draw(drawn)});
+        }
+
+        drawPixel(start, state);
+        return drawPixel;
+    }
+
+    function line(start, state, dispatch) {
+        // Your code here
+        function drawPixel(pos) {
+            let drawn = drawLine(start, pos, state);
+            dispatch({picture: state.picture.draw(drawn)});
+        }
+
+        drawPixel(start);
+        return drawPixel;
+    }
+
+    let dom = startPixelEditor({
+        tools: {draw, line, fill, rectangle, pick}
+    });
+    document.querySelector("div").appendChild(dom);
+</script>

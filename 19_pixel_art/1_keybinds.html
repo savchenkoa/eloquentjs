@@ -1,0 +1,77 @@
+<meta charset="utf-8"> <!-- to support icons-->
+<!doctype html>
+<script src="19_paint.js"></script> <!-- book editor code -->
+
+<div></div>
+<script>
+    // The original PixelEditor class. Extend the constructor.
+    //
+    class MyPixelEditor {
+        constructor(state, config) {
+            let {tools, controls, dispatch} = config;
+            this.state = state;
+
+            this.canvas = new PictureCanvas(state.picture, pos => {
+                let tool = tools[this.state.tool];
+                let onMove = tool(pos, this.state, dispatch);
+                if (onMove) {
+                    return pos => onMove(pos, this.state, dispatch);
+                }
+            });
+            this.controls = controls.map(
+                Control => new Control(state, config));
+
+            let props = {
+                tabIndex: 0
+            };
+            this.dom = elt("div", props, this.canvas.dom, elt("br"),
+                ...this.controls.reduce(
+                    (a, c) => a.concat(" ", c.dom), []));
+
+            /* Keydown listener */
+            this.dom.addEventListener("keydown", event => handleKeypress(event, tools, dispatch));
+        }
+
+        syncState(state) {
+            this.state = state;
+            this.canvas.syncState(state.picture);
+            for (let ctrl of this.controls) ctrl.syncState(state);
+        }
+    }
+    
+    function handleKeypress(event, tools, dispatch) {
+        console.log(tools);
+        const toolKeys = ["d", "f", "r", "p"];
+        let pressedKey = event.key;
+        if (toolKeys.indexOf(pressedKey.toLowerCase()) >= 0) {
+            let toolKey = Object.keys(tools).find(k => k.startsWith(pressedKey));
+            if (toolKey) {
+                dispatch({tool: toolKey});
+            }
+        } else if (pressedKey === "z" && event.ctrlKey) {
+            // undo
+            dispatch({undo: true});
+        }
+    }
+
+
+    function startPixelEditor({
+                                  state = startState,
+                                  tools = baseTools,
+                                  controls = baseControls
+                              }) {
+        let app = new MyPixelEditor(state, {
+            tools,
+            controls,
+            dispatch(action) {
+                state = historyUpdateState(state, action);
+                app.syncState(state);
+            }
+        });
+        return app.dom;
+    }
+
+
+    document.querySelector("div")
+        .appendChild(startPixelEditor({}));
+</script>
