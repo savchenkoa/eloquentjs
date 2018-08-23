@@ -1,0 +1,59 @@
+<div id="grid"></div>
+<button id="next">Next generation</button>
+
+<script>
+  // Your code here.
+  class Cell {
+    constructor(isAlive) {
+      this.isAlive = isAlive;
+    }
+
+  }
+
+  class Grid {
+    constructor(size) {
+      this.size = size;
+      this.cells = [];
+    }
+
+    init() {
+      for (let i = 0; i < this.size; i++) {
+        for (let j = 0; j < this.size; j++) {
+          this.setCell(i, j, new Cell(true));
+          console.log(this.cells);
+        }
+      }
+    }
+
+    getCell(i, j) {
+      return this.cells[i * this.size + j];
+    }
+
+    setCell(i, j, value) {
+      this.cells[i * this.size + j] = value;
+    }
+  }
+
+  const gridDiv = document.querySelector("#grid");
+  const grid = new Grid(4);
+  let checkboxes
+  grid.init();
+  render(grid);
+
+  function render(grid) {
+    for (let i = 0; i < grid.size; i++) {
+      for (let j = 0; j < grid.size; j++) {
+        let checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = grid.getCell(i, j).isAlive;
+        gridDiv.appendChild(checkbox);
+      }
+    }
+  }
+
+  function updateView(grid) {
+
+  }
+</script>
+
+<checkbox></checkbox>

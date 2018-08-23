@@ -1,0 +1,74 @@
+<html>
+
+<body>
+  <form id="editFileForm">
+    <div>
+      <label for="fileSelector">File:</label>
+      <select id="fileSelector"></select>
+    </div>
+    <div>
+      <label for="content">Content:</label>
+      <textarea id="content" style="width: 98%; height: 60%; margin: 10px 0"></textarea>
+    </div>
+    <div>
+      <button type="submit">Submit</button>
+    </div>
+  </form>
+</body>
+
+<script>
+  let editFileForm = document.querySelector('#editFileForm');
+  let textarea = document.querySelector('#content');
+  let fileSelector = document.querySelector('#fileSelector')
+  let selectedFile;
+
+  function loadFiles() {
+    fetch('/')
+      .then(response => response.text())
+      .then(text => {
+        let files = text.split('\n');
+        selectedFile = files[0];
+        loadFile(selectedFile);
+
+        for (file of files) {
+          let option = document.createElement("option");
+          option.text = file;
+          option.value = file;
+          fileSelector.appendChild(option);
+        }
+      })
+  }
+
+  function loadFile(fileName) {
+    fetch('/' + fileName)
+      .then(response => response.text())
+      .then(text => {
+        textarea.textContent = text
+      });
+  }
+
+  function updateFile(fileName, newContent) {
+    let options = {
+      method: 'PUT',
+      body: newContent,
+    };
+
+    fetch(fileName, options)
+      .then(r => alert('Success!'))
+      .catch(r => alert('Error!'))
+  }
+
+  editFileForm.addEventListener('submit', event => {
+    let newContent = textarea.value;
+    updateFile(selectedFile, newContent);
+    event.preventDefault();
+  });
+  fileSelector.addEventListener('change', event => {
+    selectedFile = fileSelector.value;
+    loadFile(selectedFile);
+  })
+
+  loadFiles();
+</script>
+
+</html>
