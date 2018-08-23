@@ -11,25 +11,25 @@
 <div id="rainbowsunicorns"></div>
 
 <script>
-  getAuthor({headers: {'Accept': 'text/plain'}}, 'plain_text');
-  getAuthor({headers: {'Accept': 'text/html'}}, 'html');
-  getAuthor({headers: {'Accept': 'application/json'}}, 'json');
-  getAuthor({headers: {'Accept': 'application/rainbows+unicorns'}}, 'rainbowsunicorns');
+    getAuthor({headers: {'Accept': 'text/plain'}}, 'plain_text');
+    getAuthor({headers: {'Accept': 'text/html'}}, 'html');
+    getAuthor({headers: {'Accept': 'application/json'}}, 'json');
+    getAuthor({headers: {'Accept': 'application/rainbows+unicorns'}}, 'rainbowsunicorns');
 
-  function getAuthor(options, elementId) {
-    let selector = '#' + elementId;
-    let element = document.querySelector(selector);
-    fetch('http://eloquentjavascript.net/author', options)
-    .then(r => {
-      if (r.status != 200) {
-        element.style.color = 'red';  
-        return r.status;
-      }
-      return r.text();
-    })
-    .then(text => {
-      console.log({text});
-      element.textContent = text;
-    });
-  }
+    function getAuthor(options, elementId) {
+        let selector = '#' + elementId;
+        let element = document.querySelector(selector);
+        fetch('http://eloquentjavascript.net/author', options)
+            .then(r => {
+                if (r.status != 200) {
+                    element.style.color = 'red';
+                    return r.status;
+                }
+                return r.text();
+            })
+            .then(text => {
+                console.log({text});
+                element.textContent = text;
+            });
+    }
 </script>

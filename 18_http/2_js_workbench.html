@@ -3,22 +3,22 @@
 <pre id="output"></pre>
 
 <script>
-  // Your code here.
-  let codeTextarea = document.querySelector('#code');
-  let runButton = document.querySelector('#button');
-  let outputElement =document.querySelector('#output')
+    // Your code here.
+    let codeTextarea = document.querySelector('#code');
+    let runButton = document.querySelector('#button');
+    let outputElement = document.querySelector('#output')
 
-  runButton.addEventListener('click', () => {
-    let code = codeTextarea.value;
-    let result;
-    try {
-      let codeFunc = Function("", code);
-      result = codeFunc();
-      outputElement.style.color = 'black';
-    } catch (err) {
-      result = err;
-      outputElement.style.color = 'red';
-    }
-    outputElement.textContent = String(result);
-  });
+    runButton.addEventListener('click', () => {
+        let code = codeTextarea.value;
+        let result;
+        try {
+            let codeFunc = Function("", code);
+            result = codeFunc();
+            outputElement.style.color = 'black';
+        } catch (err) {
+            result = err;
+            outputElement.style.color = 'red';
+        }
+        outputElement.textContent = String(result);
+    });
 </script>

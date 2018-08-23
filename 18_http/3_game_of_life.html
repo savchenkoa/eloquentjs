@@ -2,58 +2,128 @@
 <button id="next">Next generation</button>
 
 <script>
-  // Your code here.
-  class Cell {
-    constructor(isAlive) {
-      this.isAlive = isAlive;
-    }
-
-  }
-
-  class Grid {
-    constructor(size) {
-      this.size = size;
-      this.cells = [];
-    }
-
-    init() {
-      for (let i = 0; i < this.size; i++) {
-        for (let j = 0; j < this.size; j++) {
-          this.setCell(i, j, new Cell(true));
-          console.log(this.cells);
+    // Your code here.
+    class Cell {
+        constructor(isAlive) {
+            this.isAlive = isAlive;
         }
-      }
     }
 
-    getCell(i, j) {
-      return this.cells[i * this.size + j];
+    class Grid {
+        constructor(size) {
+            this.size = size;
+            this.cells = [];
+        }
+
+        init() {
+            for (let i = 0; i < this.size; i++) {
+                for (let j = 0; j < this.size; j++) {
+                    let isAlive = Math.random() > 0.5;
+                    this.setCell(i, j, new Cell(isAlive));
+                }
+            }
+        }
+
+        getCell(i, j) {
+            return this.cells[i * this.size + j];
+        }
+
+        setCell(i, j, value) {
+            this.cells[i * this.size + j] = value;
+        }
+
+        /*
+        * Any live cell with fewer than two or more than three live neighbors dies.
+        * Any live cell with two or three live neighbors lives on to the next generation.
+        * Any dead cell with exactly three live neighbors becomes a live cell.
+        */
+        simulate() {
+            let nextGrid = new Grid(this.size);
+            for (let i = 0; i < this.size; i++) {
+                for (let j = 0; j < this.size; j++) {
+                    let cell = this.getCell(i, j);
+                    let aliveNeighboursCount = this.getCellNeighbors(i, j)
+                        .filter(neighbor => {
+                            return neighbor.isAlive;
+                        })
+                        .length;
+                    // console.log(`i = ${i}, j = ${j}, aliveN = ${aliveNeighboursCount}`);
+
+                    if (cell.isAlive) {
+                        if (aliveNeighboursCount < 2 || aliveNeighboursCount > 3) {
+                            nextGrid.setCell(i, j, new Cell(false));
+                            continue;
+                        }
+                    } else {
+                        if (aliveNeighboursCount === 3) {
+                            nextGrid.setCell(i, j, new Cell(true));
+                            continue;
+                        }
+                    }
+                    nextGrid.setCell(i, j, new Cell(cell.isAlive));
+                }
+            }
+            return nextGrid;
+        }
+
+        getCellNeighbors(i, j) {
+            let result = [];
+            for (let row = i - 1; row <= i + 1; row++) {
+                if (row < 0 || row >= this.size) {
+                    continue;
+                }
+                for (let col = j - 1; col <= j + 1; col++) {
+                    if ((row === i && col === j) || col < 0 || col >= this.size) {
+                        continue;
+                    }
+                    let neighborCell = this.getCell(row, col);
+                    if (neighborCell) {
+                        result.push(neighborCell);
+                    }
+                }
+            }
+            return result;
+        }
     }
 
-    setCell(i, j, value) {
-      this.cells[i * this.size + j] = value;
+    /* Create initial checkboxes */
+    function render() {
+        for (let i = 0; i < grid.size; i++) {
+            for (let j = 0; j < grid.size; j++) {
+                let cell = grid.getCell(i, j);
+                let checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = cell.isAlive;
+                checkbox.addEventListener("click", () => {
+                    grid.getCell(i, j).isAlive = checkbox.checked;
+                });
+                gridDiv.appendChild(checkbox);
+                checkboxes.push(checkbox);
+            }
+            let newLine = document.createElement("div");
+            gridDiv.appendChild(newLine);
+        }
     }
-  }
 
-  const gridDiv = document.querySelector("#grid");
-  const grid = new Grid(4);
-  let checkboxes
-  grid.init();
-  render(grid);
-
-  function render(grid) {
-    for (let i = 0; i < grid.size; i++) {
-      for (let j = 0; j < grid.size; j++) {
-        let checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.checked = grid.getCell(i, j).isAlive;
-        gridDiv.appendChild(checkbox);
-      }
+    function updateView(grid) {
+        for (let i = 0; i < grid.size; i++) {
+            for (let j = 0; j < grid.size; j++) {
+                let cell = grid.getCell(i, j);
+                checkboxes[i * grid.size + j].checked = cell.isAlive;
+            }
+        }
     }
-  }
 
-  function updateView(grid) {
+    const gridDiv = document.querySelector("#grid");
+    let grid = new Grid(10);
+    let checkboxes = [];
+    grid.init();
+    render(grid);
 
-  }
+    /* click handle */
+    const nextBtn = document.querySelector("#next");
+    nextBtn.addEventListener('click', () => {
+        grid = grid.simulate();
+        updateView(grid);
+    });
 </script>
-
-<checkbox></checkbox>
